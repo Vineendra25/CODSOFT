@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+   <style>
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.calculator {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #4331cc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.display {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 20px;
+    background-color: #222;
+    color: #fff;
+    text-align: right;
+    padding: 10px;
+    font-size: 24px;
+    border-radius: 4px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    background-color: #2104fb;
+}
+
+.btn {
+    padding: 20px;
+    font-size: 18px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #ddd;
+}
+
+.btn[data-value="="] {
+    background-color: #37f925;
+    color: #fff;
+}
+
+.btn[data-value="C"] {
+    background-color: #d32f2f;
+    color: #fff;
+}
+   </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="btn" data-value="7">7</button>
+            <button class="btn" data-value="8">8</button>
+            <button class="btn" data-value="9">9</button>
+            <button class="btn" data-value="/">/</button>
+            <button class="btn" data-value="4">4</button>
+            <button class="btn" data-value="5">5</button>
+            <button class="btn" data-value="6">6</button>
+            <button class="btn" data-value="*">*</button>
+            <button class="btn" data-value="1">1</button>
+            <button class="btn" data-value="2">2</button>
+            <button class="btn" data-value="3">3</button>
+            <button class="btn" data-value="-">-</button>
+            <button class="btn" data-value="0">0</button>
+            <button class="btn" data-value=".">.</button>
+            <button class="btn" data-value="=">=</button>
+            <button class="btn" data-value="+">+</button>
+            <button class="btn" data-value="C">C</button>
+        </div>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const display = document.getElementById('display');
+    const buttons = document.querySelectorAll('.btn');
+    let currentInput = '';
+    let firstOperand = null;
+    let operator = null;
+    let resetDisplay = false;
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const value = button.getAttribute('data-value');
+
+            if (value === 'C') {
+                currentInput = '';
+                firstOperand = null;
+                operator = null;
+                resetDisplay = false;
+                display.textContent = '0';
+                return;
+            }
+
+            if (value === '=') {
+                if (firstOperand !== null && operator !== null) {
+                    currentInput = calculate(firstOperand, operator, currentInput);
+                    display.textContent = currentInput;
+                    firstOperand = null;
+                    operator = null;
+                    resetDisplay = true;
+                }
+                return;
+            }
+
+            if (['+', '-', '*', '/'].includes(value)) {
+                if (firstOperand === null) {
+                    firstOperand = currentInput;
+                } else if (!resetDisplay) {
+                    firstOperand = calculate(firstOperand, operator, currentInput);
+                }
+                operator = value;
+                resetDisplay = true;
+                return;
+            }
+
+            if (resetDisplay) {
+                currentInput = '';
+                resetDisplay = false;
+            }
+
+            currentInput = currentInput === '0' ? value : currentInput + value;
+            display.textContent = currentInput;
+        });
+    });
+
+    function calculate(firstOperand, operator, secondOperand) {
+        const a = parseFloat(firstOperand);
+        const b = parseFloat(secondOperand);
+        switch (operator) {
+            case '+':
+                return (a + b).toString();
+            case '-':
+                return (a - b).toString();
+            case '*':
+                return (a * b).toString();
+            case '/':
+                return (a / b).toString();
+            default:
+                return '0';
+        }
+    }
+});
+    </script>
+</body>
+</html>
